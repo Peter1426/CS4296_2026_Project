@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Exit on error
+set -e  
+
+echo "=========================================="
+echo "Image Retrieval Benchmark on AWS EC2"
+echo "=========================================="
+
+# Install dependencies
+echo "Installing dependencies..."
+sudo apt-get update
+sudo apt-get install -y python3-pip git wget unzip
+
+# Install Python packages
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+
+# Clone or update repository (if have not done so)
+if [ ! -d "CS4296_2026_Project" ]; then
+    echo "Cloning repository..."
+    git clone https://github.com/Peter1426/CS4296_2026_Project.git
+fi
+
+cd CS4296_2026_Project
+
+# Download Flickr8k dataset if not exist
+if [ ! -d "data/images" ] || [ -z "$(ls -A data/images 2>/dev/null)" ]; then
+    echo "Downloading Flickr8k dataset..."
+    mkdir -p data/images
+    mkdir -p data/queries
+    
+    # Download from the GitHub release
+    echo "Downloading flickr8k.zip (this may take a few minutes)..."
+    wget --progress=bar:force:noscroll -O flickr8k.zip \
+        "https://github.com/awsaf49/flickr-dataset/releases/download/v1.0/flickr8k.zip"
+    
+    echo "Extracting images..."
+    unzip -q flickr8k.zip -d data/
+    
+    # The zip contains an 'Images' folder
+    if [ -d "data/Images" ]; then
+        mv data/Images/* data/images/
+        rmdir data/Images
+    fi
+    
+    # Clean up
+    rm -f flickr8k.zip
+    
+    # Check if there is any images
+    IMAGE_COUNT=$(ls data/images | wc -l)
+    if [ "$IMAGE_COUNT" -eq 0 ]; then
+        echo "ERROR: Failed to extract images. Please check the download."
+        exit 1
+    fi
+    
+    # Use 100 images as queries
+    QUERY_COUNT=100
+    DATABASE_COUNT=$((TOTAL_IMAGES - QUERY_COUNT))
+    
+    echo "  Total images: $TOTAL_IMAGES"
+    echo "  Database images: $DATABASE_COUNT"
+    echo "  Query images: $QUERY_COUNT"
+    
+    # Move the LAST 100 images to queries folder (different from database)
+    tail -n $QUERY_COUNT all_images.txt | while read img; do
+        mv "$img" ../queries/
+    done
+    
+    # Clean up
+    rm all_images.txt
+    cd ../..
+    
+    echo "Dataset ready:"
+    echo "  Database images: $(ls data/images | wc -l) images"
+    echo "  Query images: $(ls data/queries | wc -l) images"
+else
+    echo "Dataset already exists. Skipping download."
+    echo "  Database images: $(ls data/images | wc -l)"
+    echo "  Query images: $(ls data/queries | wc -l)"
+fi
+
+# Run benchmark
+echo "Running benchmark..."
+python3 src/benchmark.py \
+    --dataset ./data/images \
+    --queries ./data/queries \
+    --output ./results/benchmark_results.json
+
+echo "Benchmark complete! Results in ./results/"
