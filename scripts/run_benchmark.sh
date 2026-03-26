@@ -10,11 +10,7 @@ echo "=========================================="
 # Install dependencies
 echo "Installing dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-pip git wget unzip
-
-# Install Python packages
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
+sudo apt-get install -y python3-pip git wget unzip python3-venv
 
 # Clone or update repository (if have not done so)
 if [ ! -d "CS4296_2026_Project" ]; then
@@ -23,6 +19,20 @@ if [ ! -d "CS4296_2026_Project" ]; then
 fi
 
 cd CS4296_2026_Project
+
+# Create and activate virtual environment
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
+
+echo "Activating virtual environment..."
+source venv/bin/activate
+
+# Install Python packages inside virtual environment
+echo "Installing Python packages..."
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Download Flickr8k dataset if not exist
 if [ ! -d "data/images" ] || [ -z "$(ls -A data/images 2>/dev/null)" ]; then
@@ -53,6 +63,14 @@ if [ ! -d "data/images" ] || [ -z "$(ls -A data/images 2>/dev/null)" ]; then
         echo "ERROR: Failed to extract images. Please check the download."
         exit 1
     fi
+
+    echo "Splitting dataset into database and query sets..."
+    
+    cd data/images
+    
+    # Create list of all images
+    ls *.jpg > all_images.txt
+    TOTAL_IMAGES=$(wc -l < all_images.txt)
     
     # Use 100 images as queries
     QUERY_COUNT=100
@@ -88,3 +106,6 @@ python3 src/benchmark.py \
     --output ./results/benchmark_results.json
 
 echo "Benchmark complete! Results in ./results/"
+
+# Deactivate virtual environment
+deactivate
