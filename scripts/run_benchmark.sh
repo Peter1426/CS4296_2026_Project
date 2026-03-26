@@ -98,6 +98,9 @@ else
     echo "  Query images: $(ls data/queries | wc -l)"
 fi
 
+# Create results directory if it doesn't exist
+mkdir -p results
+
 # Run benchmark
 echo "Running benchmark..."
 python3 src/benchmark.py \
