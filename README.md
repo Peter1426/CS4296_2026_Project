@@ -1,4 +1,4 @@
-# CS4296_2026_Project - Image Retrieval Benchmark on AWS EC2
+# CS4296 - Image Retrieval Benchmark on AWS EC2
 
 ## Project Overview
 
