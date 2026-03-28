@@ -1,8 +1,11 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'    # Suppress TensorFlow logging
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'   # Disable TensorFlow oneDNN custom operations warnings
+
 import numpy as np
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing import image
-import os
 import time
 
 class MobileNetFeatureExtractor:
@@ -12,7 +15,8 @@ class MobileNetFeatureExtractor:
         self.model = MobileNetV2(
             weights='imagenet',         # Load pre-trained weights on ImageNet dataset
             include_top=False,          # Remove the classification layer at top
-            pooling='avg'               # Applies global average pooling to output 1280-dimensional vector
+            pooling='avg',               # Applies global average pooling to output 1280-dimensional vector
+            input_shape=(224, 224, 3)   # Explicitly define the input shape
         )
         self.input_size = (224, 224)    # Resize image to 224*224 pixels
         print("Model loaded successfully")
