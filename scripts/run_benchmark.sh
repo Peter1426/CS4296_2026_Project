@@ -3,6 +3,9 @@
 # Exit on error
 set -e  
 
+# Check for GPU flag (default false)
+USE_GPU=${1:-false}
+
 echo "=========================================="
 echo "Image Retrieval Benchmark on AWS EC2"
 echo "=========================================="
@@ -11,6 +14,13 @@ echo "=========================================="
 echo "Installing dependencies..."
 sudo apt-get update
 sudo apt-get install -y python3-pip git wget unzip python3-venv
+
+# Install NVIDIA drivers if in GPU mode
+if [ "$USE_GPU" = "true" ]; then
+    echo "Installing NVIDIA drivers for GPU support..."
+    sudo apt-get install -y nvidia-driver-535 nvidia-utils-535
+    sudo apt-get install -y nvidia-cuda-toolkit
+fi
 
 # Clone or update repository (if have not done so)
 if [ ! -d "CS4296_2026_Project" ]; then
@@ -102,11 +112,20 @@ fi
 mkdir -p results
 
 # Run benchmark
-echo "Running benchmark..."
-python3 src/benchmark.py \
-    --dataset ./data/images \
-    --queries ./data/queries \
-    --output ./results/benchmark_results.json
+if [ "$USE_GPU" = "true" ]; then
+    echo "Running with GPU mode..."
+    python3 src/benchmark.py \
+        --dataset ./data/images \
+        --queries ./data/queries \
+        --output ./results/benchmark_results.json \
+        --gpu
+else
+    echo "Running CPU benchmark..."
+    python3 src/benchmark.py \
+        --dataset ./data/images \
+        --queries ./data/queries \
+        --output ./results/benchmark_results.json
+fi
 
 echo "Benchmark complete! Results in ./results/"
 

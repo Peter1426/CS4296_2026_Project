@@ -19,7 +19,7 @@ class BenchmarkRunner:
         self.results = []
     
     # Run benchmark on current instance
-    def run_benchmark(self, dataset_dir, query_images, name="test", k=10):
+    def run_benchmark(self, dataset_dir, query_images, name="test", k=10, use_gpu=False):
         print(f"\n{'='*50}")
         print(f"Running benchmark: {name}")
         print(f"{'='*50}")
@@ -32,7 +32,7 @@ class BenchmarkRunner:
         )
         
         print("\n[Step 2] Building FAISS index...")
-        index_builder = FAISSIndexBuilder()
+        index_builder = FAISSIndexBuilder(use_gpu = use_gpu)
         build_time = index_builder.build_flat_index(features, image_paths)
         
         print("\n[Step 3] Measuring memory usage...")
@@ -168,6 +168,7 @@ def main():
     parser.add_argument('--output', default='benchmark_results.json', help='Output file')       # add an optional argument
     parser.add_argument('--name', default=None, help='Benchmark name')                          # add an optional argument
     parser.add_argument('--k', type=int, default=10, help='Number of results per query')        # add an optional argument
+    parser.add_argument('--gpu', action='store_true', help='Use GPU for FAISS if available')    # add an optional argument
     
     args = parser.parse_args()
     
@@ -196,7 +197,7 @@ def main():
             benchmark_name = "unknown_instance"
     
     runner = BenchmarkRunner()
-    runner.run_benchmark(args.dataset, query_images, name=benchmark_name, k=args.k)
+    runner.run_benchmark(args.dataset, query_images, name=benchmark_name, k=args.k, use_gpu=args.gpu)
     runner.save_results(args.output)
 
 

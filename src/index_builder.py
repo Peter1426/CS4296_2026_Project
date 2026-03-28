@@ -6,10 +6,30 @@ import pickle
 
 class FAISSIndexBuilder:
     # Initialize FAISS index builder
-    def __init__(self, dimension=1280):
+    def __init__(self, dimension=1280, use_gpu=False):
         self.dimension = dimension
         self.index = None
         self.image_paths = []
+        self.use_gpu = use_gpu
+        self.gpu_available = False
+        self.num_gpus = 0
+
+        # Chekc gpu validity
+        if use_gpu:
+            print("Checking GPU availability...")
+            try:
+                self.num_gpus = faiss.get_num_gpus()
+                self.gpu_available = self.num_gpus > 0
+                if self.gpu_available:
+                    print(f"GPU mode enabled. Found {self.num_gpus} GPU(s) available")
+                else:
+                    print("Warning: No GPU detected, falling back to CPU mode")
+                    self.use_gpu = False
+
+            except Exception as e:
+                print(f"Warning: GPU initialization failed: {e}")
+                print("Falling back to CPU mode")
+                self.use_gpu = False
     
     # Build the FlatL2 index
     def build_flat_index(self, features, image_paths):
@@ -19,6 +39,11 @@ class FAISSIndexBuilder:
         self.index = faiss.IndexFlatL2(self.dimension)  # Create FlatL2 index
         self.index.add(features.astype('float32'))      # Add feature vectors to index in float32 data type
         self.image_paths = image_paths                  # Store list of image paths
+        
+        # Check if using gpu mode
+        if self.use_gpu and self.gpu_available:
+            print(f"Converting index to multi-GPU mode using {self.num_gpus} GPU(s)...")
+            self.index = faiss.index_cpu_to_all_gpus(self.index)
         
         # Show details of index
         elapsed = time.time() - start_time
@@ -61,9 +86,16 @@ class FAISSIndexBuilder:
         # Create directiry if it doesn't exist
         os.makedirs(save_dir, exist_ok=True)
         
-        index_path = os.path.join(save_dir, 'faiss_index.bin')      # Create the full path for the FAISS index file
-        faiss.write_index(self.index, index_path)                   # Use FAISS's built-in function to save index to disk
-        
+        # Convert to cpu before saving
+        if self.use_gpu and self.gpu_available:
+            print("Converting GPU index to CPU for saving...")
+            cpu_index = faiss.index_gpu_to_cpu(self.index)
+            index_path = os.path.join(save_dir, 'faiss_index.bin')      # Create the full path for the FAISS index file
+            faiss.write_index(cpu_index, index_path)                   # Use FAISS's built-in function to save index to disk
+        else:
+            index_path = os.path.join(save_dir, 'faiss_index.bin')      
+            faiss.write_index(self.index, index_path)
+
         # Save the image paths file in pickle (byte stream)
         paths_path = os.path.join(save_dir, 'image_paths.pkl')
         with open(paths_path, 'wb') as f:
