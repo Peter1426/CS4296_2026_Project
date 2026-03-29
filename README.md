@@ -35,6 +35,24 @@ The system is deployed and benchmarked on various EC2 instance types (t3.medium,
 | g4dn.xlarge | Single GPU (NVIDIA T4) |
 | g4dn.12xlarge | Multi-GPU (4× T4) |
 
+## Dataset
+
+This project uses the **Flickr8k dataset** (8,092 images). The benchmark script automatically downloads the dataset from one of the following sources:
+
+1. **GitHub Release** (primary): https://github.com/awsaf49/flickr-dataset/releases/download/v1.0/flickr8k.zip
+2. **Kaggle API** (fallback): Requires Kaggle account and API key
+3. **Manual download** (last resort): Instructions provided if automatic download fails
+
+### If Automatic Download Fails
+
+1. Download manually from: https://www.kaggle.com/datasets/adityajn105/flickr8k (you need to sign up a kaggle account)
+2. Place `flickr8k.zip` in the project root directory
+3. Rerun the script
+
+The dataset is approximately 1 GB. After extraction and splitting:
+- Database: ~7,992 images (for building FAISS index)
+- Queries: 100 images (completely separate, for testing)
+
 ## Prerequisites
 
 - Ubuntu 20.04 or 22.04 EC2 instance
