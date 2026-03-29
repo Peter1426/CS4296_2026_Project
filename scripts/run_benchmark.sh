@@ -8,6 +8,7 @@ USE_GPU=${1:-false}
 
 echo "=========================================="
 echo "Image Retrieval Benchmark on AWS EC2"
+echo "GPU mode: $USE_GPU"
 echo "=========================================="
 
 # Install dependencies
@@ -49,11 +50,44 @@ if [ ! -d "data/images" ] || [ -z "$(ls -A data/images 2>/dev/null)" ]; then
     echo "Downloading Flickr8k dataset..."
     mkdir -p data/images
     mkdir -p data/queries
+
+    # Try multiple download sources
+    DOWNLOAD_SUCCESS=false
     
-    # Download from the GitHub release
-    echo "Downloading flickr8k.zip (this may take a few minutes)..."
-    wget --progress=bar:force:noscroll -O flickr8k.zip \
-        "https://github.com/awsaf49/flickr-dataset/releases/download/v1.0/flickr8k.zip"
+    # Source 1: Download from the GitHub release
+    echo "Attempting download flickr8k.zip from GitHub release (this may take a few minutes)..."
+    if wget --progress=bar:force:noscroll -O flickr8k.zip \
+        "https://github.com/awsaf49/flickr-dataset/releases/download/v1.0/flickr8k.zip"; then
+        DOWNLOAD_SUCCESS=true
+    fi
+
+    # Source 2: Download from Kaggle (requires kaggle API)
+    if [ "$DOWNLOAD_SUCCESS" = false ]; then
+        echo "GitHub source failed. Trying Kaggle API..."
+        pip install kaggle
+        if kaggle datasets download -d adityajn105/flickr8k; then
+            mv flickr8k.zip flickr8k.zip
+            DOWNLOAD_SUCCESS=true
+        fi
+    fi
+
+    # Source 3: Direct URL
+    if [ "$DOWNLOAD_SUCCESS" = false ]; then
+        echo "Previous sources failed. Trying alternative URL..."
+        if wget --progress=bar:force:noscroll -O flickr8k.zip \
+            "https://www.kaggle.com/api/v1/datasets/adityajn105/flickr8k/download"; then
+            DOWNLOAD_SUCCESS=true
+        fi
+    fi
+    
+    # Check if download succeeded
+    if [ "$DOWNLOAD_SUCCESS" = false ]; then
+        echo "ERROR: All download sources failed."
+        echo "Please manually download Flickr8k from:"
+        echo "  https://www.kaggle.com/datasets/adityajn105/flickr8k"
+        echo "Then place the zip file in this directory and rerun."
+        exit 1
+    fi
     
     echo "Extracting images..."
     unzip -q flickr8k.zip -d data/
