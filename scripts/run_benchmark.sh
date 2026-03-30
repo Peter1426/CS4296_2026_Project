@@ -187,6 +187,7 @@ export TF_CPP_MIN_LOG_LEVEL=3
 
 # Run benchmark
 if [ "$USE_GPU" = "true" ]; then
+    unset CUDA_VISIBLE_DEVICES
     echo "Running with GPU mode..."
     python3 src/benchmark.py \
         --dataset ./data/images \
