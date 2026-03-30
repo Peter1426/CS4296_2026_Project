@@ -34,13 +34,34 @@ if [ "$USE_GPU" = "true" ]; then
     sudo apt-get install -y -q --no-install-recommends nvidia-cuda-toolkit
 fi
 
-# Clone or update repository (if have not done so)
-if [ ! -d "CS4296_2026_Project" ]; then
+# Check if in the correct directory
+if [ -f "src/benchmark.py" ]; then
+    echo "Already in project directory: $(pwd)"
+# Check if project folder exists with valid content
+elif [ -d "CS4296_2026_Project" ] && [ -f "CS4296_2026_Project/src/benchmark.py" ]; then
+    echo "Found existing project, moving into CS4296_2026_Project..."
+    cd CS4296_2026_Project
+# Project folder not exist, clone it
+elif [ ! -d "CS4296_2026_Project" ]; then
     echo "Cloning repository..."
     git clone https://github.com/Peter1426/CS4296_2026_Project.git
+    cd CS4296_2026_Project
+# Project folder exists but is incomplete
+else
+    echo "Project directory exists but seems incomplete. Removing and clone again..."
+    rm -rf CS4296_2026_Project
+    git clone https://github.com/Peter1426/CS4296_2026_Project.git
+    cd CS4296_2026_Project
 fi
 
-cd CS4296_2026_Project
+# Verify if in the correct directory or not
+if [ ! -f "src/benchmark.py" ]; then
+    echo "ERROR: Could not find src/benchmark.py. Current directory: $(pwd)"
+    echo "Please check the repository structure."
+    exit 1
+fi
+
+echo "Working directory: $(pwd)"
 
 # Create and activate virtual environment
 if [ ! -d "venv" ]; then
