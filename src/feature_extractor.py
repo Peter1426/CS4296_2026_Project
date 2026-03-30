@@ -1,6 +1,7 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'    # Suppress TensorFlow logging
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'   # Disable TensorFlow oneDNN custom operations warnings
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'   # Hide CUDA devices
 
 import numpy as np
 from tensorflow.keras.applications import MobileNetV2
