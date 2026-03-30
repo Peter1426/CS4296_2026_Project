@@ -6,6 +6,14 @@ set -e
 # Prevent interactive prompts
 export DEBIAN_FRONTEND=noninteractive
 
+# Disable needrestart
+sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf 2>/dev/null || true
+sudo sed -i 's/^#\$nrconf{restart} = '\''i'\'';/\$nrconf{restart} = '\''a'\'';/g' /etc/needrestart/needrestart.conf 2>/dev/null || true
+echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/needrestart.conf
+
+# Suppress debconf questions
+echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
+
 # Check for GPU flag (default false)
 USE_GPU=${1:-false}
 
@@ -17,13 +25,13 @@ echo "=========================================="
 # Install dependencies
 echo "Installing dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-pip git wget unzip python3-venv curl
+sudo apt-get install -y -q --no-install-recommends python3-pip git wget unzip python3-venv curl
 
 # Install NVIDIA drivers if in GPU mode
 if [ "$USE_GPU" = "true" ]; then
     echo "Installing NVIDIA drivers for GPU support..."
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q nvidia-driver-535 nvidia-utils-535
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q nvidia-cuda-toolkit
+    sudo apt-get install -y -q --no-install-recommends nvidia-driver-535 nvidia-utils-535
+    sudo apt-get install -y -q --no-install-recommends nvidia-cuda-toolkit
 fi
 
 # Clone or update repository (if have not done so)
@@ -43,10 +51,15 @@ fi
 echo "Activating virtual environment..."
 source venv/bin/activate
 
-# Install Python packages inside virtual environment
-echo "Installing Python packages..."
-pip install --upgrade pip
-pip install -r requirements.txt
+# Install Python packages inside virtual environment using appropriate requirements file
+pip install --upgrade pip -q
+if [ "$USE_GPU" = "true" ]; then
+    echo "Installing packages with GPU support..."
+    pip install -r requirements-gpu.txt
+else
+    echo "Installing packages with CPU support..."
+    pip install -r requirements-cpu.txt
+fi
 
 # Download Flickr8k dataset if not exist
 if [ ! -d "data/images" ] || [ -z "$(ls -A data/images 2>/dev/null)" ]; then
