@@ -186,14 +186,23 @@ def main():
     if not benchmark_name:
         try:
             import urllib.request
-            # Try to get instance type from AWS metadata
-            req = urllib.request.Request(
-                'http://169.254.169.254/latest/meta-data/instance-type',
+            # Get a token (PUT request)
+            token_req = urllib.request.Request(
+                'http://169.254.169.254/latest/api/token',
+                method='PUT',
                 headers={'X-aws-ec2-metadata-token-ttl-seconds': '21600'}
             )
-            with urllib.request.urlopen(req, timeout=1) as response:
+            with urllib.request.urlopen(token_req, timeout=1) as response:
+                token = response.read().decode('utf-8')
+
+            # Use token to get instance type
+            type_req = urllib.request.Request(
+                'http://169.254.169.254/latest/meta-data/instance-type',
+                headers={'X-aws-ec2-metadata-token': token}
+            )
+            with urllib.request.urlopen(type_req, timeout=1) as response:
                 benchmark_name = response.read().decode('utf-8')
-        except:
+        except Exception:
             benchmark_name = "unknown_instance"
     
     runner = BenchmarkRunner()
