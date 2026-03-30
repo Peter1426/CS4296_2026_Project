@@ -11,9 +11,9 @@ The image retrieval system consists of two components:
 ## Key Feature
 
 - Automatic dataset download
-    - The project uses the **Flickr8k** dataset (8,092 images)
+    - The project uses the **Flickr8k** dataset (8,091 images, 1 caption)
 - Automatic dataset splitting
-    - The **Flickr8k** dataset are split into **Database**: 7,992 images and **Queries**: 100 images
+    - The **Flickr8k** dataset are split into **Database**: 7,991 images and **Queries**: 100 images
 - CPU and GPU benchmark modes
 - Multi-GPU support (auto-detects)
 - Comprehensive performance metrics:
@@ -25,19 +25,24 @@ The image retrieval system consists of two components:
 
 ## Evaluate EC2 instances
 
-The system is deployed and benchmarked on various EC2 instance types (t3.medium, c5.large, r5.large, g4dn.xlarge, g4dn.12xlarge) to evaluate.
+The system is deployed and benchmarked on six EC2 instance types (t3.micro, t3.medium, t3.large, c5.large, c5.xlarge, r5.large) to evaluate.
 
-| Type | Purpose |
-|------|---------|
-| t3.medium | CPU baseline (general purpose) |
-| c5.large | CPU compute-optimized |
-| r5.large | CPU memory-optimized |
-| g4dn.xlarge | Single GPU (NVIDIA T4) |
-| g4dn.12xlarge | Multi-GPU (4× T4) |
+| Type | vCPU | RAM | Purpose |
+|------|------|-----|---------|
+| t3.micro | 2 | 1 GB | CPU baseline (RAM impact test) |
+| t3.medium | 2 | 4 GB | CPU baseline (RAM impact test) |
+| t3.large | 2 | 8 GB | Burstable | CPU baseline (RAM impact test) |
+| c5.large | 2 | 4 GB | CPU compute-optimized (CPU scaling test) |
+| c5.xlarge | 4 | 8 GB | Compute-optimized (CPU scaling test) |
+| r5.large | 2 | 16 GB | CPU memory-optimized (Memory bandwidth test) |
+
+### GPU Support
+
+GPU acceleration is implemented using FAISS's `index_cpu_to_all_gpus()` function, which automatically detects and utilizes all available GPUs. ***Although testing with GPU instances is not possible due to AWS Academy account limitations, the code is fully ready for GPU deployment.***
 
 ## Dataset
 
-This project uses the **Flickr8k dataset** (8,092 images). The benchmark script automatically downloads the dataset from one of the following sources:
+This project uses the **Flickr8k dataset** (8,091 images). The benchmark script automatically downloads the dataset from one of the following sources:
 
 1. **GitHub Release** (primary): https://github.com/awsaf49/flickr-dataset/releases/download/v1.0/flickr8k.zip
 2. **Kaggle API** (fallback): Requires Kaggle account and API key
@@ -50,7 +55,7 @@ This project uses the **Flickr8k dataset** (8,092 images). The benchmark script 
 3. Rerun the script
 
 The dataset is approximately 1 GB. After extraction and splitting:
-- Database: ~7,992 images (for building FAISS index)
+- Database: ~7,991 images (for building FAISS index)
 - Queries: 100 images (completely separate, for testing)
 
 ## Prerequisites
