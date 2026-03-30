@@ -25,16 +25,16 @@ The image retrieval system consists of two components:
 
 ## Evaluate EC2 instances
 
-The system is deployed and benchmarked on six EC2 instance types (t3.micro, t3.medium, t3.large, c5.large, c5.xlarge, r5.large) to evaluate.
+The system is deployed and benchmarked on six EC2 instance types (t3.micro, t3.medium, t3.large, c5.large, r5.large, m5.large) to evaluate.
 
 | Type | vCPU | RAM | Purpose |
 |------|------|-----|---------|
 | t3.micro | 2 | 1 GB | CPU baseline (RAM impact test) |
 | t3.medium | 2 | 4 GB | CPU baseline (RAM impact test) |
 | t3.large | 2 | 8 GB | CPU baseline (RAM impact test) |
-| c5.large | 2 | 4 GB | CPU compute-optimized (CPU scaling test) |
-| c5.xlarge | 4 | 8 GB | Compute-optimized (CPU scaling test) |
-| r5.large | 2 | 16 GB | CPU memory-optimized (Memory bandwidth test) |
+| c5.large | 2 | 4 GB | CPU compute-optimized |
+| r5.large | 2 | 16 GB | CPU memory-optimized |
+| m5.large | 2 | 8 GB | Balanced alternative |
 
 ### GPU Support
 
