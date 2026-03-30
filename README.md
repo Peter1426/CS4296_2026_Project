@@ -31,7 +31,7 @@ The system is deployed and benchmarked on six EC2 instance types (t3.micro, t3.m
 |------|------|-----|---------|
 | t3.micro | 2 | 1 GB | CPU baseline (RAM impact test) |
 | t3.medium | 2 | 4 GB | CPU baseline (RAM impact test) |
-| t3.large | 2 | 8 GB | Burstable | CPU baseline (RAM impact test) |
+| t3.large | 2 | 8 GB | CPU baseline (RAM impact test) |
 | c5.large | 2 | 4 GB | CPU compute-optimized (CPU scaling test) |
 | c5.xlarge | 4 | 8 GB | Compute-optimized (CPU scaling test) |
 | r5.large | 2 | 16 GB | CPU memory-optimized (Memory bandwidth test) |
