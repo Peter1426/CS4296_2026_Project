@@ -3,6 +3,9 @@
 # Exit on error
 set -e  
 
+# Prevent interactive prompts
+export DEBIAN_FRONTEND=noninteractive
+
 # Check for GPU flag (default false)
 USE_GPU=${1:-false}
 
@@ -14,13 +17,13 @@ echo "=========================================="
 # Install dependencies
 echo "Installing dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-pip git wget unzip python3-venv
+sudo apt-get install -y python3-pip git wget unzip python3-venv curl
 
 # Install NVIDIA drivers if in GPU mode
 if [ "$USE_GPU" = "true" ]; then
     echo "Installing NVIDIA drivers for GPU support..."
-    sudo apt-get install -y nvidia-driver-535 nvidia-utils-535
-    sudo apt-get install -y nvidia-cuda-toolkit
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q nvidia-driver-535 nvidia-utils-535
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q nvidia-cuda-toolkit
 fi
 
 # Clone or update repository (if have not done so)
