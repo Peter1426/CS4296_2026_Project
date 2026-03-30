@@ -182,6 +182,9 @@ fi
 # Create results directory if it doesn't exist
 mkdir -p results
 
+# Suppress TensorFlow logging
+export TF_CPP_MIN_LOG_LEVEL=3
+
 # Run benchmark
 if [ "$USE_GPU" = "true" ]; then
     echo "Running with GPU mode..."
@@ -191,6 +194,8 @@ if [ "$USE_GPU" = "true" ]; then
         --output ./results/benchmark_results.json \
         --gpu
 else
+    # hide CUDA warnings of devices visibility
+    export CUDA_VISIBLE_DEVICES=-1
     echo "Running CPU benchmark..."
     python3 src/benchmark.py \
         --dataset ./data/images \
