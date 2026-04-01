@@ -23,6 +23,15 @@ data/
 *.gif
 *.bmp
 
+# Collect Results
+!collected_results/
+!collected_results/*.json
+!collected_results/*.xlsx
+!figures/
+!figures/*.png
+!figures/*.jpg
+!figures/*.pdf
+
 # IDE files
 .vscode/
 .idea/

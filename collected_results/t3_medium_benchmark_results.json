@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2026-03-31T06:39:06.062290",
+    "benchmark_name": "t3.medium",
+    "instance_type": "t3.medium",
+    "availability_zone": "us-east-1f",
+    "dataset_size": 5000,
+    "num_queries": 100,
+    "build_time_sec": 0.036446571350097656,
+    "memory_mb": 805.93359375,
+    "avg_query_time_ms": 2.9953908920288086,
+    "queries_per_second": 333.84624446216765,
+    "k": 10
+  }
+]

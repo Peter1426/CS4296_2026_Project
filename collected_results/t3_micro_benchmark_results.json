@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2026-03-31T07:09:38.178998",
+    "benchmark_name": "t3.micro",
+    "instance_type": "t3.micro",
+    "availability_zone": "us-east-1f",
+    "dataset_size": 5000,
+    "num_queries": 100,
+    "build_time_sec": 0.05052947998046875,
+    "memory_mb": 513.2578125,
+    "avg_query_time_ms": 2.5338053703308105,
+    "queries_per_second": 394.6633043363711,
+    "k": 10
+  }
+]

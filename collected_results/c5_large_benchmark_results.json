@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2026-03-31T06:22:47.337117",
+    "benchmark_name": "c5.large",
+    "instance_type": "c5.large",
+    "availability_zone": "us-east-1f",
+    "dataset_size": 5000,
+    "num_queries": 100,
+    "build_time_sec": 0.03183126449584961,
+    "memory_mb": 806.52734375,
+    "avg_query_time_ms": 2.332630157470703,
+    "queries_per_second": 428.7006222556563,
+    "k": 10
+  }
+]
