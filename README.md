@@ -32,8 +32,8 @@ The system is deployed and benchmarked on six EC2 instance types (t3.micro, t3.m
 | t3.micro | 2 | 1 GB | CPU baseline (RAM impact test) |
 | t3.medium | 2 | 4 GB | CPU baseline (RAM impact test) |
 | t3.large | 2 | 8 GB | CPU baseline (RAM impact test) |
-| c5.large | 2 | 4 GB | CPU compute-optimized |
-| r5.large | 2 | 16 GB | CPU memory-optimized |
+| c5.large | 2 | 4 GB | compute-optimized |
+| r5.large | 2 | 16 GB | memory-optimized |
 | m5.large | 2 | 8 GB | Balanced alternative |
 
 ### GPU Support
@@ -62,7 +62,7 @@ The dataset is approximately 1 GB. After extraction and splitting:
 
 - Ubuntu 20.04 or 22.04 EC2 instance
 - Minimum 30 GB storage (50 GB for GPU instances)
-- Git and Python 3.8+
+- Git and Python 3.10+
 
 ## Quick Start
 
