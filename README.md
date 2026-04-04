@@ -14,7 +14,7 @@ The image retrieval system consists of two components:
     - The project uses the **Flickr8k** dataset (8,091 images, 1 caption)
 - Automatic dataset splitting
     - The **Flickr8k** dataset are split into **Database**: 7,991 images and **Queries**: 100 images
-    - To speed up the process, only 5000 images of the 7,991 images **Database** will be used. 
+    - To speed up the process, only 5000 images of the 7,991 images **Database** will be used
 - CPU and GPU benchmark modes
 - Multi-GPU support (auto-detects)
 - Comprehensive performance metrics:
