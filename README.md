@@ -64,6 +64,38 @@ The dataset is approximately 1 GB. After extraction and splitting:
 - Minimum 30 GB storage (50 GB for GPU instances)
 - Git and Python 3.10+
 
+## FOLDER STRUCTURE:
+```
+Program/
+├── scripts/
+|   └── run_benchmark.sh    # script for benchmark automatically
+├── src/
+│   ├── benchmark.py    # benchmark method
+│   ├── feature_extaction.py    # MobileNetV2 feature extractor
+│   └── index_builder.py    # FAISS index builder
+├── data/ (auto-created)
+│   ├── images/
+│   └── queries/
+├── results/ (auto-created)
+|   ├── benchmark_results.json
+│   └── benchmark_results.csv
+├── collected_results/
+│   ├── Summary_Result.xlsx    # Summary of six instances results
+│   ├── c5_large_benchmark_results.json
+│   ├── m5_large_benchmark_results.json
+│   ├── r5_large_benchmark_results.json
+│   ├── t3_large_benchmark_results.json
+│   ├── t3_medium_benchmark_results.json
+│   └── t3_micro_benchmark_results.json
+└── figures
+    ├── Test_Result_AvgQueryTime.png
+    ├── Test_Result_BuildTime.png
+    ├── Test_Result_Memory.png
+    ├── Test_Result_QPS.png
+    ├── Test_Result_QPS_vs_LinuxCostPerHour.png
+    └── Test_Result_QPS_vs_UbuntuCostPerHour.png
+```
+
 ## Quick Start
 
 ```bash
